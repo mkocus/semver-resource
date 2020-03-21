@@ -43,6 +43,8 @@ The `git` driver works by modifying a file in a repository with every bump. The
 
 * `commit_message`: *Optional.* If specified overides the default commit message with the one provided. The user can use %version% and %file% to get them replaced automatically with the correct values.
 
+* `git_tag_commit`: *Optional.* If set to true, the commit will be tagged with the version number, using lightweight tag.
+
 ### `s3` Driver
 
 The `s3` driver works by modifying a file in an S3 compatible bucket.

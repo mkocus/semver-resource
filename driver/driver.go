@@ -98,6 +98,7 @@ func FromSource(source models.Source) (Driver, error) {
 			Password:               source.Password,
 			File:                   source.File,
 			GitUser:                source.GitUser,
+			GitTagCommit:           source.GitTagCommit,
 			CommitMessage:          source.CommitMessage,
 			SkipSSLVerification:    source.SkipSSLVerification,
 		}, nil

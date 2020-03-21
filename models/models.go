@@ -72,6 +72,7 @@ type Source struct {
 	File          string `json:"file"`
 	GitUser       string `json:"git_user"`
 	CommitMessage string `json:"commit_message"`
+	GitTagCommit  bool   `json:"git_tag_commit"`
 
 	OpenStack OpenStackOptions `json:"openstack"`
 

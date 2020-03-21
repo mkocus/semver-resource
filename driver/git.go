@@ -40,6 +40,7 @@ type GitDriver struct {
 	Depth               string
 	CommitMessage       string
 	SkipSSLVerification bool
+	GitTagCommit        bool
 }
 
 func (driver *GitDriver) Bump(bump version.Bump) (semver.Version, error) {
@@ -369,6 +370,15 @@ func (driver *GitDriver) writeVersion(newVersion semver.Version) (bool, error) {
 	if err != nil {
 		os.Stderr.Write(commitOutput)
 		return false, err
+	}
+
+	if (driver.GitTagCommit){
+		gitTag := exec.Command("git", "tag", "-f", newVersion.String())
+		tagOutput, err := gitTag.CombinedOutput()
+		if err != nil {
+			os.Stderr.Write(tagOutput)
+			return false, err
+		}
 	}
 
 	gitPush := exec.Command("git", "push", "origin", "HEAD:"+driver.Branch)
