@@ -372,8 +372,9 @@ func (driver *GitDriver) writeVersion(newVersion semver.Version) (bool, error) {
 		return false, err
 	}
 
-	if (driver.GitTagCommit){
+	if driver.GitTagCommit {
 		gitTag := exec.Command("git", "tag", "-f", newVersion.String())
+		gitTag.Dir = gitRepoDir
 		tagOutput, err := gitTag.CombinedOutput()
 		if err != nil {
 			os.Stderr.Write(tagOutput)
