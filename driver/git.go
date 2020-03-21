@@ -372,16 +372,6 @@ func (driver *GitDriver) writeVersion(newVersion semver.Version) (bool, error) {
 		return false, err
 	}
 
-	if driver.GitTagCommit {
-		gitTag := exec.Command("git", "tag", "-f", newVersion.String())
-		gitTag.Dir = gitRepoDir
-		tagOutput, err := gitTag.CombinedOutput()
-		if err != nil {
-			os.Stderr.Write(tagOutput)
-			return false, err
-		}
-	}
-
 	gitPush := exec.Command("git", "push", "origin", "HEAD:"+driver.Branch)
 	gitPush.Dir = gitRepoDir
 
@@ -402,6 +392,38 @@ func (driver *GitDriver) writeVersion(newVersion semver.Version) (bool, error) {
 	if err != nil {
 		os.Stderr.Write(pushOutput)
 		return false, err
+	}
+
+	if driver.GitTagCommit {
+		gitTag := exec.Command("git", "tag", "-f", newVersion.String())
+		gitTag.Dir = gitRepoDir
+		tagOutput, err := gitTag.CombinedOutput()
+		if err != nil {
+			os.Stderr.Write(tagOutput)
+			return false, err
+		}
+
+		gitPush := exec.Command("git", "push", "origin", "HEAD:"+driver.Branch, newVersion.String())
+		gitPush.Dir = gitRepoDir
+	
+		pushOutput, err := gitPush.CombinedOutput()
+	
+		if strings.Contains(string(pushOutput), falsePushString) {
+			return false, nil
+		}
+	
+		if strings.Contains(string(pushOutput), pushRejectedString) {
+			return false, nil
+		}
+	
+		if strings.Contains(string(pushOutput), pushRemoteRejectedString) {
+			return false, nil
+		}
+	
+		if err != nil {
+			os.Stderr.Write(pushOutput)
+			return false, err
+		}
 	}
 
 	return true, nil
